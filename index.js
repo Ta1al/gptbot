@@ -53,24 +53,25 @@ client.on("messageCreate", async (message) => {
       try {
         await api.ensureAuth();
         message.channel.sendTyping();
-        const answer = await conversation.sendMessage(question, {
+        let partialResponse;
+        const interval = setInterval(function() {
+          if(typeof partialResponse !== 'undefined') {
+            status.edit(makeResponse(`${partialResponse} ${config.typingEmoji}`));
+          }
+        }, 1500);
+        await conversation.sendMessage(question, {
           timeoutMs: 5 * 60 * 1000,
+          onProgress: (partial) => {
+            partialResponse = partial;
+          },
         });
-
-        let response = answer
-        if (answer.length > 2000) response = { embeds: [ { description: answer, color: 0x2f3136 } ] };
-        if (answer.length > 4096) {
-          const file = new AttachmentBuilder(Buffer.from(answer)).name("response.txt");
-          response = { files: [ file ] };
-        }
-        
-        await message.reply(response);
+        await status.edit(makeResponse(partialResponse));
+        return clearInterval(interval);
       } catch (e) {
         console.error(e);
         await message.reply(`An error occurred:\n\`\`\`\n${e.message}\`\`\``)
           .catch(console.error);
       } finally {
-        status.delete().catch(console.error);
         processing = false;
       }
     } else {
@@ -82,8 +83,19 @@ client.on("messageCreate", async (message) => {
 client.on("error", console.error);
 client.on("warn", console.warn);
 
+function makeResponse(answer) {
+  let response = answer;
+  if (answer.length > 2000)
+    response = { content: "", embeds: [ { description: answer, color: 0x2f3136 } ] };
+  if (answer.length > 4096) {
+    const file = new AttachmentBuilder(Buffer.from(answer)).name("response.txt");
+    response = { content: "", files: [ file ] };
+  }
+  return response;
+}
+
 function capitalizeFirstLetter(string) {
-  return string[0].toUpperCase() + string.slice(1);
+  return string[ 0 ].toUpperCase() + string.slice(1);
 }
 
 client.login(config.discordToken);
