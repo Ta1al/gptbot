@@ -59,7 +59,7 @@ client.on("messageCreate", async (message) => {
             status.edit(makeResponse(`${partialResponse} ${config.typingEmoji}`));
           }
         }, 1500);
-        await conversation.sendMessage(question, {
+        const fullResponse = await conversation.sendMessage(question, {
           timeoutMs: 5 * 60 * 1000,
           onProgress: (partial) => {
             partialResponse = partial;
@@ -67,7 +67,7 @@ client.on("messageCreate", async (message) => {
         });
 
         clearInterval(interval);
-        return await status.edit(makeResponse(partialResponse));
+        return await status.edit(makeResponse(fullResponse));
       } catch (e) {
         console.error(e);
         await message.reply(`An error occurred:\n\`\`\`\n${e.message}\`\`\``)
