@@ -3,7 +3,7 @@ import { ChatGPTAPI } from "chatgpt";
 
 const require = createRequire(import.meta.url);
 const config = require("./config.json");
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, AttachmentBuilder } = require("discord.js");
 
 var processing = false;
 const client = new Client({
@@ -56,7 +56,13 @@ client.on("messageCreate", async (message) => {
           timeoutMs: 5 * 60 * 1000,
         });
 
-        await message.reply(answer);
+        let response = answer
+        if (answer.length > 2000) response = { embeds: [ { description: answer, color: 0x2f3136 } ] };
+        if (answer.length > 4096) {
+          const file = new AttachmentBuilder(Buffer.from(answer)).name("response.txt");
+          response = { files: [ file ] };
+        }
+        await message.reply(response);
         status.delete();
       } catch (e) {
         console.log(e);
