@@ -69,6 +69,9 @@ client.on("messageCreate", async (message) => {
   }
 });
 
+client.on("error", console.error);
+client.on("warn", console.warn);
+
 function capitalizeFirstLetter(string) {
   return string[0].toUpperCase() + string.slice(1);
 }
