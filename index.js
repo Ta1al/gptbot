@@ -21,6 +21,8 @@ const api = new ChatGPTAPI({
 
 const conversation = api.getConversation();
 
+client.on("ready", trueClient => console.log(`${trueClient.user.tag} is ready!`));
+
 client.on("messageCreate", async (message) => {
   if (
     message.author.bot ||
