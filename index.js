@@ -12,6 +12,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMembers,
   ],
+  allowedMentions: { parse: [] },
 });
 
 const api = new ChatGPTAPI({
