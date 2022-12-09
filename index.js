@@ -52,6 +52,7 @@ client.on("messageCreate", async (message) => {
 
       try {
         await api.ensureAuth();
+        message.channel.sendTyping();
         const answer = await conversation.sendMessage(question, {
           timeoutMs: 5 * 60 * 1000,
         });
@@ -62,12 +63,14 @@ client.on("messageCreate", async (message) => {
           const file = new AttachmentBuilder(Buffer.from(answer)).name("response.txt");
           response = { files: [ file ] };
         }
+        
         await message.reply(response);
-        status.delete();
       } catch (e) {
-        console.log(e);
-        status.edit(e);
+        console.error(e);
+        await message.reply(`An error occurred:\n\`\`\`\n${e.message}\`\`\``)
+          .catch(console.error);
       } finally {
+        status.delete().catch(console.error);
         processing = false;
       }
     } else {
