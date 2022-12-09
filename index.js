@@ -59,6 +59,7 @@ client.on("messageCreate", async (message) => {
         await message.reply(answer);
         status.delete();
       } catch (e) {
+        console.log(e);
         status.edit(e);
       } finally {
         processing = false;
