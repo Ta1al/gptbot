@@ -65,8 +65,9 @@ client.on("messageCreate", async (message) => {
             partialResponse = partial;
           },
         });
-        await status.edit(makeResponse(partialResponse));
-        return clearInterval(interval);
+
+        clearInterval(interval);
+        return await status.edit(makeResponse(partialResponse));
       } catch (e) {
         console.error(e);
         await message.reply(`An error occurred:\n\`\`\`\n${e.message}\`\`\``)
