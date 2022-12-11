@@ -67,10 +67,12 @@ client.on("messageCreate", async (message) => {
         });
 
         clearInterval(interval);
-        return await status.edit(makeResponse(fullResponse));
+        setTimeout(() => {
+          status.edit(makeResponse(fullResponse));
+        }, 1500);
       } catch (e) {
         console.error(e);
-        await message.reply(`An error occurred:\n\`\`\`\n${e.message}\`\`\``)
+        await status.edit(`An error occurred:\n\`\`\`\n${e.message}\`\`\``)
           .catch(console.error);
       } finally {
         processing = false;
