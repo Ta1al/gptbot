@@ -61,6 +61,7 @@ client.on("messageCreate", async (message) => {
         }, 1500);
         const fullResponse = await conversation.sendMessage(question, {
           timeoutMs: 5 * 60 * 1000,
+          abortSignal: AbortSignal.timeout(5 * 60 * 1000),
           onProgress: (partial) => {
             partialResponse = partial;
           },
